@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class B_ComparatorTest {
+class B_ComparatorTest {
 
     final Person michael = new Person("Michael", "Jackson", 51);
     final Person rod = new Person("Rod", "Stewart", 71);
@@ -24,9 +24,8 @@ public class B_ComparatorTest {
      * For instance FOUR (4 letters) is greater than TWO (three letters)
      */
     @Test
-    @Disabled
-    public void comparator01() {
-        java.util.Comparator<String> compareByLength = null; // TODO
+    void comparator01() {
+        java.util.Comparator<String> compareByLength = Comparator.comparingInt(String::length); // TODO
 
         Assertions.assertTrue(compareByLength.compare("FOUR", "TWO") > 0);
         Assertions.assertTrue(compareByLength.compare("ONE", "SEVEN") < 0);
@@ -43,9 +42,10 @@ public class B_ComparatorTest {
      * Write a Comparator that compare instances of String using their length.
      * If the lengths are the same, then use the alphabetical order.
      */
-    @Test @Disabled
-    public void comparator02() {
-        Comparator<String> compareByLengthThenAlphabetical = null; // TODO
+    @Test
+    void comparator02() {
+        Comparator<String> compareByLengthThenAlphabetical =
+                Comparator.comparing(String::length).thenComparing(Comparator.naturalOrder()); // TODO
 
         Assertions.assertTrue(compareByLengthThenAlphabetical.compare("FOUR", "TWO") > 0);
         Assertions.assertTrue(compareByLengthThenAlphabetical.compare("ONE", "SEVEN") < 0);
@@ -64,9 +64,9 @@ public class B_ComparatorTest {
     /**
      * Write a Comparator that compares instances of Person using their lastName.
      */
-    @Test @Disabled
-    public void comparator03() {
-        Comparator<Person> comparebyLastName = null; // TODO
+    @Test
+    void comparator03() {
+        Comparator<Person> comparebyLastName = Comparator.comparing(Person::lastName); // TODO
 
         Assertions.assertTrue(comparebyLastName.compare(michael, rod) < 0);
         Assertions.assertTrue(comparebyLastName.compare(paul, paul) == 0);
@@ -83,9 +83,10 @@ public class B_ComparatorTest {
      * Write a Comparator that compares instances of Person using their
      * lastName, and if their last name is the same, uses their first name.
      */
-    @Test @Disabled
-    public void comparator04() {
-        Comparator<Person> comparebyLastNameThenFirstName = null; // TODO
+    @Test
+    void comparator04() {
+        Comparator<Person> comparebyLastNameThenFirstName =
+                Comparator.comparing(Person::lastName).thenComparing(Person::name); // TODO
 
         Assertions.assertTrue(comparebyLastNameThenFirstName.compare(michael, rod) < 0);
         Assertions.assertTrue(comparebyLastNameThenFirstName.compare(paul, paul) == 0);
@@ -103,9 +104,12 @@ public class B_ComparatorTest {
      * the same last name, the one with the greater first name should be
      * ordered first.
      */
-    @Test @Disabled
-    public void comparator05() {
-        Comparator<Person> comparebyLastNameThenFirstNameReversed = null; // TODO
+    @Test
+    void comparator05() {
+        Comparator<Person> comparebyLastNameThenFirstNameReversed =
+                Comparator.comparing(Person::lastName)
+                        .thenComparing(Person::name)
+                        .reversed(); // TODO
 
         assertFalse(comparebyLastNameThenFirstNameReversed.compare(michael, rod) < 0);
         Assertions.assertTrue(comparebyLastNameThenFirstNameReversed.compare(paul, paul) == 0);
@@ -121,9 +125,12 @@ public class B_ComparatorTest {
      * one you wrote in comparator04(), but that supports null values. The null
      * values should be considered greater than any non-null values.
      */
-    @Test @Disabled
-    public void comparator06() {
-        Comparator<Person> comparebyLastNameThenFirstNameWithNull = null; // TODO
+    @Test
+    void comparator06() {
+        Comparator<Person> comparebyLastNameThenFirstNameWithNull =
+                Comparator.nullsLast(
+                        Comparator.comparing(Person::lastName)
+                                .thenComparing(Person::name)); // TODO
 
         Assertions.assertTrue(comparebyLastNameThenFirstNameWithNull.compare(michael, rod) < 0);
         Assertions.assertTrue(comparebyLastNameThenFirstNameWithNull.compare(paul, paul) == 0);
@@ -140,9 +147,9 @@ public class B_ComparatorTest {
      * Write a Comparator that compares two people by age.
      * Try to write the comparator so as to avoid boxing of primitives.
      */
-    @Test @Disabled
-    public void comparator07() {
-        Comparator<Person> comparebyAge = null; // TODO
+    @Test
+    void comparator07() {
+        Comparator<Person> comparebyAge = Comparator.comparingInt(Person::age); // TODO
 
         Assertions.assertTrue(comparebyAge.compare(michael, rod) < 0);
         Assertions.assertTrue(comparebyAge.compare(paul, paul) == 0);
@@ -161,9 +168,9 @@ public class B_ComparatorTest {
      * two objects, but in this case we are comparing int primitives, so the
      * functional interface we use is IntBinaryOperator.
      */
-    @Test @Disabled
-    public void comparator08() {
-        IntBinaryOperator intCompare = null; // TODO
+    @Test
+    void comparator08() {
+        IntBinaryOperator intCompare = (left, right) -> left > right ? 1 : left == right ? 0 : -1;  // TODO
 
         Assertions.assertTrue(intCompare.applyAsInt(0, 1) < 0);
         Assertions.assertTrue(intCompare.applyAsInt(1, 1) == 0);
@@ -181,9 +188,9 @@ public class B_ComparatorTest {
      * int result that is less than, equal to, or greater than zero, like
      * a comparator.
      */
-    @Test @Disabled
-    public void comparator09() {
-        IntBinaryOperator intCompare = null; // TODO
+    @Test
+    void comparator09() {
+        IntBinaryOperator intCompare = Integer::compare; // TODO
 
         Assertions.assertTrue(intCompare.applyAsInt(0, 1) < 0);
         Assertions.assertTrue(intCompare.applyAsInt(1, 1) == 0);
@@ -208,9 +215,9 @@ public class B_ComparatorTest {
      * special cases such NaN. Consider all NaN values to be equal to each other
      * and greater than any non-NaN value.
      */
-    @Test @Disabled
-    public void comparator10() {
-        DoubleToIntBiFunction doubleCompare = null; // TODO
+    @Test
+    void comparator10() {
+        DoubleToIntBiFunction doubleCompare = Double::compare; // TODO
 
         Assertions.assertTrue(doubleCompare.applyAsInt(0.0, 1.0) < 0);
         Assertions.assertTrue(doubleCompare.applyAsInt(1.0, 1.0) == 0);
