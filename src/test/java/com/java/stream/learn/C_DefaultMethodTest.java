@@ -22,14 +22,14 @@ public class C_DefaultMethodTest {
      * in-place by appending the string "new" to each one.
      */
     @Test
-    @Disabled
-    public void c01_appendNew() {
+    void c01_appendNew() {
         List<StringBuilder> sbList = List.of(
                 new StringBuilder("alfa"),
                 new StringBuilder("bravo"),
                 new StringBuilder("charlie"));
 
         // TODO write code to modify sbList
+        sbList.forEach(sb -> sb.append("new"));
 
         Assertions.assertEquals(List.of("alfanew", "bravonew", "charlienew"),
                 sbList.stream()
@@ -46,7 +46,7 @@ public class C_DefaultMethodTest {
      * Remove the words that have odd lengths from the list.
      */
     @Test @Disabled
-    public void c02_removeOddLengthWords() {
+    void c02_removeOddLengthWords() {
         List<String> list = new ArrayList<>(Arrays.asList(
                 "alfa", "bravo", "charlie", "delta", "echo", "foxtrot"));
 
@@ -64,7 +64,7 @@ public class C_DefaultMethodTest {
      * Replace every word in the list with its upper case equivalent.
      */
     @Test @Disabled
-    public void c03_upcaseAllWords() {
+    void c03_upcaseAllWords() {
         List<String> list = Arrays.asList(
                 "alfa", "bravo", "charlie", "delta", "echo", "foxtrot");
 
@@ -85,7 +85,7 @@ public class C_DefaultMethodTest {
      * Integer key. This should mutate each StringBuilder value in-place.
      */
     @Test @Disabled
-    public void c04_appendToMapValues() {
+    void c04_appendToMapValues() {
         Map<Integer, StringBuilder> map = new TreeMap<>();
         map.put(1, new StringBuilder("alfa"));
         map.put(2, new StringBuilder("bravo"));
@@ -111,7 +111,7 @@ public class C_DefaultMethodTest {
      * Integer key.
      */
     @Test @Disabled
-    public void c05_replaceMapValues() {
+    void c05_replaceMapValues() {
         Map<Integer, String> map = new TreeMap<>();
         map.put(1, "alfa");
         map.put(2, "bravo");
@@ -135,7 +135,7 @@ public class C_DefaultMethodTest {
      * each word, and whose values are list of words with that length.
      */
     @Test @Disabled
-    public void c06_mapOfListOfStringsByLength() {
+    void c06_mapOfListOfStringsByLength() {
         List<String> list = List.of(
                 "aardvark", "bison", "capybara",
                 "alligator", "bushbaby", "chimpanzee",
@@ -163,7 +163,7 @@ public class C_DefaultMethodTest {
      * separated by a colon (':').
      */
     @Test @Disabled
-    public void c07_mapOfStringByInitialCharacter() {
+    void c07_mapOfStringByInitialCharacter() {
         List<String> list = List.of(
                 "aardvark", "bison", "capybara",
                 "alligator", "bushbaby", "chimpanzee",
@@ -190,7 +190,7 @@ public class C_DefaultMethodTest {
      * Write code to ensure that all missing keys are mapped to the empty string.
      */
     @Test @Disabled
-    public void c08_mapWithMissingValues() {
+    void c08_mapWithMissingValues() {
         List<String> keys = Arrays.asList("a", "b", "c", "d", "e", "f", "g");
         Map<String, String> map = new HashMap<>(Map.of("a", "alfa",
                 "b", "bravo",
@@ -220,7 +220,7 @@ public class C_DefaultMethodTest {
      * time, we want to remove the entry if the value is the empty string.
      */
     @Test @Disabled
-    public void c09_mapRemoveEntriesWithEmptyValues() {
+    void c09_mapRemoveEntriesWithEmptyValues() {
         List<String> keys = Arrays.asList("a", "b", "c", "d", "e", "f", "g");
         Map<String, String> map = new HashMap<>(Map.of("a", "alfa",
                 "b", "bravo",
@@ -251,7 +251,7 @@ public class C_DefaultMethodTest {
      * Write the code to do that.
      */
     @Test @Disabled
-    public void c10_mapReplaceEmptyValues() {
+    void c10_mapReplaceEmptyValues() {
         List<String> keys = Arrays.asList("a", "b", "c", "d", "e", "f", "g");
         Map<String, String> map = new HashMap<>(Map.of("a", "alfa",
                 "b", "bravo",
@@ -285,7 +285,7 @@ public class C_DefaultMethodTest {
      * same as the key.
      */
     @Test @Disabled
-    public void c11_computeWithMissingEntries() {
+    void c11_computeWithMissingEntries() {
         List<String> keys = Arrays.asList("a", "b", "c", "d", "e", "f", "g");
         Map<String, String> map = new HashMap<>(Map.of("a", "alfa",
                 "b", "bravo",
@@ -317,7 +317,7 @@ public class C_DefaultMethodTest {
      * for which the values are the empty string.
      */
     @Test @Disabled
-    public void c12_computeAndRemoveSomeEntries() {
+    void c12_computeAndRemoveSomeEntries() {
         List<String> keys = Arrays.asList("a", "b", "c", "d", "e", "f", "g");
         Map<String, String> map = new HashMap<>(Map.of("a", "alfa",
                 "b", "bravo",
