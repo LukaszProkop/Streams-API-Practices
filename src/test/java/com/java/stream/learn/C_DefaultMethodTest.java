@@ -140,7 +140,6 @@ public class C_DefaultMethodTest {
      * each word, and whose values are list of words with that length.
      */
     @Test
-    @Disabled
     void c06_mapOfListOfStringsByLength() {
         List<String> list = List.of(
                 "aardvark", "bison", "capybara",
