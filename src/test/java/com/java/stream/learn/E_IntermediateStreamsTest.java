@@ -3,16 +3,15 @@ package com.java.stream.learn;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.AbstractCollection;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.*;
@@ -22,17 +21,19 @@ import org.junit.jupiter.api.*;
  * This set of exercises covers more advanced stream operations
  * longer stream pipelines, and simple reductions.
  */
-public class E_IntermediateStreamsTest {
+class E_IntermediateStreamsTest {
 
     /**
      * Convert a list of strings into a list of characters.
      */
     @Test
-    @Disabled
-    public void e1_stringsToCharacters() {
+    void e1_stringsToCharacters() {
         List<String> input = List.of("alfa", "bravo", "charlie");
 
-        List<Character> result = null; // TODO
+        List<Character> result = input.stream()
+                .flatMap(str -> str.chars()
+                        .mapToObj(no -> (char) no))
+                .toList();// TODO
 
         Assertions.assertEquals("[a, l, f, a, b, r, a, v, o, c, h, a, r, l, i, e]", result.toString());
         Assertions.assertTrue(result.stream().allMatch(x -> x instanceof Character));
@@ -58,9 +59,11 @@ public class E_IntermediateStreamsTest {
      *
      * @throws IOException
      */
-    @Test @Disabled
-    public void e2_listOfAllWords() throws IOException {
-        List<String> output = null; // TODO
+    @Test
+    void e2_listOfAllWords() throws IOException {
+        List<String> output = SPLIT_PATTERN.splitAsStream(reader.lines()
+                        .collect(Collectors.joining(",")))
+                .toList(); // TODO
 
         Assertions.assertEquals(
                 List.of(
@@ -92,9 +95,14 @@ public class E_IntermediateStreamsTest {
      *
      * @throws IOException
      */
-    @Test @Disabled
-    public void e3_longLowerCaseSortedWords() throws IOException {
-        List<String> output = null; // TODO
+    @Test
+    void e3_longLowerCaseSortedWords() throws IOException {
+        List<String> output = reader.lines()
+                .flatMap(SPLIT_PATTERN::splitAsStream)
+                .filter(str -> str.length() >= 8)
+                .map(String::toLowerCase)
+                .sorted()
+                .toList(); // TODO
 
         Assertions.assertEquals(
                 List.of(
@@ -115,9 +123,13 @@ public class E_IntermediateStreamsTest {
      *
      * @throws IOException
      */
-    @Test @Disabled
-    public void e4_longLowerCaseReverseSortedWords() throws IOException {
-        List<String> result = null; // TODO
+    @Test
+    void e4_longLowerCaseReverseSortedWords() throws IOException {
+        List<String> result = reader.lines()
+                .flatMap(SPLIT_PATTERN::splitAsStream)
+                .filter(str -> str.length()>=8)
+                .sorted(Comparator.reverseOrder())
+                .toList(); // TODO
 
         Assertions.assertEquals(
                 List.of(
@@ -137,9 +149,15 @@ public class E_IntermediateStreamsTest {
      *
      * @throws IOException
      */
-    @Test @Disabled
-    public void e5_sortedLowerCaseDistinctByLengthThenAlphabetically() throws IOException {
-        List<String> result = null; // TODO
+    @Test
+    void e5_sortedLowerCaseDistinctByLengthThenAlphabetically() throws IOException {
+        List<String> result = reader.lines()
+                .flatMap(SPLIT_PATTERN::splitAsStream)
+                .map(String::toLowerCase)
+                .distinct()
+                .sorted()
+                .sorted(Comparator.comparingInt(String::length).thenComparing(Comparator.naturalOrder()))
+                .toList(); // TODO
 
         Assertions.assertEquals(
                 List.of(
@@ -171,9 +189,11 @@ public class E_IntermediateStreamsTest {
      * Compute the value of 21!, that is, 21 factorial. This value is larger than
      * Long.MAX_VALUE, so you must use BigInteger.
      */
-    @Test @Disabled
-    public void e6_bigFactorial() {
-        BigInteger result = BigInteger.ONE; // TODO
+    @Test
+    void e6_bigFactorial() {
+        BigInteger result = IntStream.rangeClosed(1,21)
+                .mapToObj(BigInteger::valueOf)
+                .reduce(BigInteger.ONE, BigInteger::multiply); // TODO
 
         Assertions.assertEquals(new BigInteger("51090942171709440000"), result);
     }
@@ -194,9 +214,12 @@ public class E_IntermediateStreamsTest {
      *
      * @throws IOException
      */
-    @Test @Disabled
-    public void e7_getLastWord() throws IOException {
-        String result = null; // TODO
+    @Test
+    void e7_getLastWord() throws IOException {
+        String result = reader.lines()
+                .flatMap(SPLIT_PATTERN::splitAsStream)
+                .reduce((str1, str2) -> str2)
+                .orElse(""); // TODO
 
         Assertions.assertEquals("thee", result);
     }
@@ -208,11 +231,13 @@ public class E_IntermediateStreamsTest {
     /**
      * Create a list containing ArrayList.class and all its super classes.
      */
-    @Test @Disabled
-    public void e8_selectTheSuperClassesOfArrayList() {
+    @Test
+    void e8_selectTheSuperClassesOfArrayList() {
         Class<?> origin = ArrayList.class;
 
-        List<String> result = null; // TODO
+        List<Class<?>> result = Stream.<Class<?>>iterate(origin, Class::getSuperclass)
+                .takeWhile(Objects::nonNull)
+                .toList(); // TODO
 
         Assertions.assertEquals(
                 List.of(ArrayList.class, AbstractList.class, AbstractCollection.class, Object.class),
@@ -230,8 +255,8 @@ public class E_IntermediateStreamsTest {
     /**
      * Count the length of a stream dropping the first elements on a predicate.
      */
-    @Test @Disabled
-    public void e9_countTheElementsAfterAPredicate() {
+    @Test
+    void e9_countTheElementsAfterAPredicate() {
 
         Random rand = new Random(314L);
         Stream<String> stream = Stream.iterate(
@@ -243,7 +268,7 @@ public class E_IntermediateStreamsTest {
                                     : s;
                 }).limit(100);
 
-        long count = 0L; // TODO
+        long count = stream.dropWhile(s -> s.length() < 3).count(); // TODO
 
         Assertions.assertEquals(53, count);
     }
@@ -265,13 +290,14 @@ public class E_IntermediateStreamsTest {
     private BufferedReader reader;
 
     @BeforeEach
-    public void z_setUpBufferedReader() throws IOException {
-        reader = Files.newBufferedReader(
-                Paths.get("SonnetI.txt"), StandardCharsets.UTF_8);
+    void z_setUpBufferedReader() throws IOException {
+        reader =
+                new BufferedReader(
+                        new InputStreamReader(this.getClass().getResource("/SonnetI.txt").openStream()));
     }
 
     @AfterEach
-    public void z_closeBufferedReader() throws IOException {
+    void z_closeBufferedReader() throws IOException {
         reader.close();
     }
 
