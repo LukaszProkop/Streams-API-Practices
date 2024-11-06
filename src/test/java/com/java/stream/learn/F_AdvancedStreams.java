@@ -9,15 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -41,9 +37,10 @@ public class F_AdvancedStreams {
      * @throws IOException
      */
     @Test
-    @Disabled
     public void f1_mapLengthToWordList() throws IOException {
-        Map<Integer, List<String>> result = null; // TODO
+        Map<Integer, List<String>> result = reader.lines()
+                .flatMap(SPLIT_PATTERN::splitAsStream)
+                .collect(Collectors.groupingBy(String::length, Collectors.toList())); // TODO
 
         assertEquals(10, result.get(7).size());
         assertEquals(Set.of("beauty's", "increase", "ornament"), new HashSet<>(result.get(8)));
@@ -67,21 +64,23 @@ public class F_AdvancedStreams {
      *
      * @throws IOException
      */
-    @Test @Disabled
+    @Test
     public void f2_mapLengthToWordCount() throws IOException {
-        Map<Integer, Long> result = null; // TODO
+        Map<Integer, Long> result = reader.lines()
+                .flatMap(SPLIT_PATTERN::splitAsStream)
+                .collect(Collectors.groupingBy(String::length, Collectors.counting())); // TODO
 
-        assertEquals(Map.ofEntries(entry( 1,  1L),
-                        entry( 2, 11L),
-                        entry( 3, 28L),
-                        entry( 4, 21L),
-                        entry( 5, 16L),
-                        entry( 6, 12L),
-                        entry( 7, 10L),
-                        entry( 8,  3L),
-                        entry( 9,  2L),
-                        entry(10,  2L),
-                        entry(11,  1L)),
+        assertEquals(Map.ofEntries(entry(1, 1L),
+                        entry(2, 11L),
+                        entry(3, 28L),
+                        entry(4, 21L),
+                        entry(5, 16L),
+                        entry(6, 12L),
+                        entry(7, 10L),
+                        entry(8, 3L),
+                        entry(9, 2L),
+                        entry(10, 2L),
+                        entry(11, 1L)),
                 result);
     }
     // Hint 1:
@@ -103,17 +102,20 @@ public class F_AdvancedStreams {
      *
      * @throws IOException
      */
-    @Test @Disabled
+    @Test
     public void f3_wordFrequencies() throws IOException {
-        Map<String, Long> result = null; // TODO
+        Map<String, Long> result = reader.lines()
+                .flatMap(SPLIT_PATTERN::splitAsStream)
+//                .collect(Collectors.groupingBy(s -> s, Collectors.counting())); // TODO
+                .collect(Collectors.toMap(s -> s, s -> 1L, Long::sum));
 
-        assertEquals(2L, (long)result.get("tender"));
-        assertEquals(6L, (long)result.get("the"));
-        assertEquals(1L, (long)result.get("churl"));
-        assertEquals(2L, (long)result.get("thine"));
-        assertEquals(1L, (long)result.get("world"));
-        assertEquals(4L, (long)result.get("thy"));
-        assertEquals(3L, (long)result.get("self"));
+        assertEquals(2L, (long) result.get("tender"));
+        assertEquals(6L, (long) result.get("the"));
+        assertEquals(1L, (long) result.get("churl"));
+        assertEquals(2L, (long) result.get("thine"));
+        assertEquals(1L, (long) result.get("world"));
+        assertEquals(4L, (long) result.get("thy"));
+        assertEquals(3L, (long) result.get("self"));
         assertFalse(result.containsKey("lambda"));
     }
     // Hint 1:
@@ -135,16 +137,19 @@ public class F_AdvancedStreams {
      * one as the key.) The inner map, in turn, is a mapping from the length of the
      * word to a list of words with that length. Don't bother with any lowercasing
      * or uniquifying of the words.
-     *
+     * <p>
      * For example, given the words "foo bar baz bazz foo" the string
      * representation of the result would be:
-     *     {b={3=[bar, baz], 4=[bazz]}, f={3=[foo, foo]}}
+     * {b={3=[bar, baz], 4=[bazz]}, f={3=[foo, foo]}}
      *
      * @throws IOException
      */
-    @Test @Disabled
+    @Test
     public void f4_nestedMaps() throws IOException {
-        Map<String, Map<Integer, List<String>>> result = null; // TODO
+        Map<String, Map<Integer, List<String>>> result = reader.lines()
+                .flatMap(SPLIT_PATTERN::splitAsStream)
+                .collect(Collectors.groupingBy(s -> s.substring(0,1),
+                        Collectors.groupingBy(String::length))); // TODO
 
         assertEquals("[abundance]", result.get("a").get(9).toString());
         assertEquals("[by, be, by]", result.get("b").get(2).toString());
@@ -172,12 +177,18 @@ public class F_AdvancedStreams {
      * in this stream. Since the input is a stream, this necessitates making a single
      * pass over the input.
      */
-    @Test @Disabled
+    @Test
     public void f5_separateOddEvenSums() {
         IntStream input = new Random(987523).ints(20, 0, 100);
-
-        int sumEvens = 0; // TODO
-        int sumOdds  = 0; // TODO
+        List<Integer> numbers = input.boxed().toList();
+        int sumEvens = numbers.stream()
+                .filter(number -> number%2==0)
+                .mapToInt(Integer::intValue)
+                .sum(); // TODO
+        int sumOdds = numbers.stream()
+                .filter(number -> number%2==1)
+                .mapToInt(Integer::intValue)
+                .sum(); // TODO
 
         assertEquals(516, sumEvens);
         assertEquals(614, sumOdds);
@@ -200,7 +211,8 @@ public class F_AdvancedStreams {
      * is a parallel stream, so you MUST write a proper combiner function to get the
      * correct result.
      */
-    @Test @Disabled
+    @Test
+    @Disabled
     public void f6_insertBeginningAndEnd() {
         Stream<String> input = List.of(
                         "a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
@@ -238,7 +250,7 @@ public class F_AdvancedStreams {
      * Your task is to fill in the implementation of the accumulate() and
      * combine() methods in the helper class. You don't need to modify the
      * test method itself.
-     *
+     * <p>
      * The stream is run in parallel, so you must write a combine() method
      * that works properly.
      */
@@ -256,8 +268,13 @@ public class F_AdvancedStreams {
             // TODO write code to combine the other object into this one
         }
 
-        int getTotalCount() { return count; }
-        int getDistinctCount() { return set.size(); }
+        int getTotalCount() {
+            return count;
+        }
+
+        int getDistinctCount() {
+            return set.size();
+        }
     }
     // Hint:
     // <editor-fold defaultstate="collapsed">
@@ -265,7 +282,8 @@ public class F_AdvancedStreams {
     // Don't overthink it.
     // </editor-fold>
 
-    @Test @Disabled
+    @Test
+    @Disabled
     public void f7_countTotalAndDistinctWords() {
         List<String> allWords = reader.lines()
                 .map(String::toLowerCase)
@@ -280,7 +298,7 @@ public class F_AdvancedStreams {
                                 TotalAndDistinct::accumulate,
                                 TotalAndDistinct::combine);
 
-    Assertions.assertEquals(81, totalAndDistinct.getDistinctCount(), "distinct count");
+        Assertions.assertEquals(81, totalAndDistinct.getDistinctCount(), "distinct count");
         assertEquals(10700, totalAndDistinct.getTotalCount(), "total count");
     }
 
@@ -297,8 +315,9 @@ public class F_AdvancedStreams {
 
     @BeforeEach
     public void z_setUpBufferedReader() throws IOException {
-        reader = Files.newBufferedReader(
-                Paths.get("SonnetI.txt"), StandardCharsets.UTF_8);
+        reader =
+                new BufferedReader(
+                        new InputStreamReader(this.getClass().getResource("/SonnetI.txt").openStream()));
     }
 
     @AfterEach
