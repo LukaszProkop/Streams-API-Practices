@@ -26,6 +26,6 @@ public class GeneralProblemsNumbersSolution {
   }
 
   public static long sumOfDigits(List<Integer> input) {
-    return input.stream().reduce(0, Integer::sum);
+    return input.stream().distinct().reduce(0, Integer::sum);
   }
 }

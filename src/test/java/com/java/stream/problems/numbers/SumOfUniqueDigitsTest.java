@@ -14,11 +14,12 @@ import org.junit.jupiter.api.Test;
 public class SumOfUniqueDigitsTest {
 
   @Test
-  @Disabled
   void testSumOfUniqueDigitsTest() {
     final var input = List.of(5, 6, 7, 8, 5, 5, 8, 8, 7);
     var expected = GeneralProblemsNumbersSolution.sumOfDigits(input);
-    var actual = List.of();
+    long actual = input.stream()
+            .distinct()
+            .reduce(0, Integer::sum);
 
     Assertions.assertEquals(expected, actual);
   }
