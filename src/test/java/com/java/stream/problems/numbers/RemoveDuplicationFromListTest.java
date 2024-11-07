@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
  * */
 public class RemoveDuplicationFromListTest {
   @Test
-  @Disabled
   void testRemoveDuplicationFromListTest() {
     final var instance = Faker.instance();
 
@@ -36,7 +35,9 @@ public class RemoveDuplicationFromListTest {
             instance.number().randomNumber(),
             instance.number().randomNumber(),
             instance.number().randomNumber());
-    var actual = List.<Long>of();
+    var actual = input.stream()
+            .distinct()
+            .toList();
     var expected = GeneralProblemsNumbersSolution.getUniqueNumberFromList(input);
 
     Assertions.assertEquals(expected, actual);
