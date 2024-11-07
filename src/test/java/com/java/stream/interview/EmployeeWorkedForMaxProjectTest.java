@@ -45,7 +45,18 @@ public class EmployeeWorkedForMaxProjectTest {
 
         var expected = InterviewProblemSolutions.employeesWorkedForMaxProjects(corporateEmployees);
 
-        CorporateEmployee actual = null; // Assert that the actual output matches the expected output
+        int size = corporateEmployees.size();
+
+        CorporateEmployee actual = corporateEmployees.stream()
+                .sorted(Comparator.comparing(empl -> empl.projects().size()))
+                .sorted(Comparator.comparingInt(empl -> empl.projects()
+                        .stream()
+                        .mapToInt(value -> value.duration())
+                        .sum()))
+                .skip(size-1)
+                .limit(1)
+                .findFirst()
+                .get();// ;// Assert that the actual output matches the expected output
 
         Assertions.assertEquals(expected, actual);
     }
