@@ -56,7 +56,7 @@ public class EmployeeWorkedForMaxProjectTest {
                 .skip(size-1)
                 .limit(1)
                 .findFirst()
-                .get();// ;// Assert that the actual output matches the expected output
+                .orElse(new CorporateEmployee(1, "orElse", new ArrayList<>()));// ;// Assert that the actual output matches the expected output
 
         Assertions.assertEquals(expected, actual);
     }
